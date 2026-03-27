@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
@@ -14,7 +13,6 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@SpringBootTest
 class FilmorateApplicationTests {
 
     private final UserController userController = new UserController();
@@ -71,5 +69,24 @@ class FilmorateApplicationTests {
         film.setReleaseDate(LocalDate.of(1890, 1, 1));
         film.setDuration(Duration.ofMinutes(90));
         assertThrows(ValidationException.class, () -> filmController.validateFilm(film));
+    }
+
+    @Test
+    void testUserValidation_validUser() {
+        User user = new User();
+        user.setEmail("valid@example.com");
+        user.setLogin("validlogin");
+        user.setBirthday(LocalDate.of(1990, 1, 1));
+        userController.validateUser(user);
+    }
+
+    @Test
+    void testFilmValidation_validFilm() {
+        Film film = new Film();
+        film.setName("Valid Film");
+        film.setDescription("Short description");
+        film.setReleaseDate(LocalDate.of(2000, 1, 1));
+        film.setDuration(Duration.ofMinutes(120));
+        filmController.validateFilm(film);
     }
 }
