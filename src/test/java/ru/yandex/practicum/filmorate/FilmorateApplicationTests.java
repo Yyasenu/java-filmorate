@@ -11,7 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.time.Duration;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class FilmorateApplicationTests {
 
@@ -81,12 +81,14 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    void testFilmValidation_validFilm() {
+    void testFilmValidation_validFilm_withDurationCheck() {
         Film film = new Film();
         film.setName("Valid Film");
         film.setDescription("Short description");
         film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(Duration.ofMinutes(120));
-        filmController.validateFilm(film);
+        Duration expectedDuration = Duration.ofMinutes(120);
+        film.setDuration(expectedDuration);
+        assertDoesNotThrow(() -> filmController.validateFilm(film));
+        assertEquals(expectedDuration, film.getDuration());
     }
 }
