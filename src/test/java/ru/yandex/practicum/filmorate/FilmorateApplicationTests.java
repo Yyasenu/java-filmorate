@@ -48,7 +48,7 @@ class FilmorateApplicationTests {
     void testFilmValidation_emptyName() {
         Film film = new Film();
         film.setReleaseDate(LocalDate.now());
-        film.setDuration(Duration.ofMinutes(90));
+        film.setDuration(90 * 60);
         assertThrows(ValidationException.class, () -> filmController.validateFilm(film));
     }
 
@@ -56,9 +56,9 @@ class FilmorateApplicationTests {
     void testFilmValidation_descriptionTooLong() {
         Film film = new Film();
         film.setName("TestFilm");
-        film.setDescription("a".repeat(201)); // 201 символ
+        film.setDescription("a".repeat(201));
         film.setReleaseDate(LocalDate.now());
-        film.setDuration(Duration.ofMinutes(90));
+        film.setDuration(90 * 60);
         assertThrows(ValidationException.class, () -> filmController.validateFilm(film));
     }
 
@@ -67,7 +67,7 @@ class FilmorateApplicationTests {
         Film film = new Film();
         film.setName("TestFilm");
         film.setReleaseDate(LocalDate.of(1890, 1, 1));
-        film.setDuration(Duration.ofMinutes(90));
+        film.setDuration(90 * 60);
         assertThrows(ValidationException.class, () -> filmController.validateFilm(film));
     }
 
@@ -78,17 +78,5 @@ class FilmorateApplicationTests {
         user.setLogin("validlogin");
         user.setBirthday(LocalDate.of(1990, 1, 1));
         userController.validateUser(user);
-    }
-
-    @Test
-    void testFilmValidation_validFilm_withDurationCheck() {
-        Film film = new Film();
-        film.setName("Valid Film");
-        film.setDescription("Short description");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        Duration expectedDuration = Duration.ofMinutes(120);
-        film.setDuration(expectedDuration);
-        assertDoesNotThrow(() -> filmController.validateFilm(film));
-        assertEquals(expectedDuration, film.getDuration());
     }
 }

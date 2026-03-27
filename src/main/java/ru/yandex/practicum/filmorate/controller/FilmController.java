@@ -59,7 +59,7 @@ public class FilmController {
         if (film.getDuration() == null) {
             throw new ValidationException("Продолжительность фильма не может быть пустой");
         }
-        if (film.getDuration().isNegative() || film.getDuration().isZero()) {
+        if (film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность фильма должна быть положительным числом");
         }
     }
