@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FilmorateApplicationTests {
+class FilmorateApplicationTest {
 
     private final UserController userController = new UserController();
     private final FilmController filmController = new FilmController();
