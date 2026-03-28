@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         validateUser(user);
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -42,7 +43,6 @@ public class UserController {
         if (user.getId() == null || !users.containsKey(user.getId())) {
             throw new ValidationException("Пользователь с id = " + user.getId() + " не найден");
         }
-        validateUser(user);
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName((user.getLogin()));
         }
@@ -51,9 +51,9 @@ public class UserController {
         return user;
     }
 
-    public void validateUser(User user) {
+    private void validateUser(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @");
+            throw new ValidationException("Email не может быть пустым и должен содержать @");
         }
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
