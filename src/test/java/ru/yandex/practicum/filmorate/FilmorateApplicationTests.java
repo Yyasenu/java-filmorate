@@ -17,7 +17,7 @@ class SimpleValidationTests {
     private final FilmController filmController = new FilmController();
 
     @Test
-    void testEmptyEmailThrowsException() {
+    void FilmorateApplicationTests() {
         User user = new User();
         user.setLogin("testlogin");
         user.setBirthday(LocalDate.now());
