@@ -22,10 +22,7 @@ class SimpleValidationTests {
         user.setLogin("testlogin");
         user.setBirthday(LocalDate.now());
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.createUser(user)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> userController.createUser(user));
         assertTrue(exception.getMessage().contains("Email"));
     }
 
@@ -36,10 +33,7 @@ class SimpleValidationTests {
         user.setLogin("user name");
         user.setBirthday(LocalDate.now());
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.createUser(user)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> userController.createUser(user));
         assertTrue(exception.getMessage().contains("Логин"));
     }
 
@@ -50,10 +44,7 @@ class SimpleValidationTests {
         user.setLogin("validlogin");
         user.setBirthday(LocalDate.now().plusDays(1));
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.createUser(user)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> userController.createUser(user));
         assertTrue(exception.getMessage().contains("рождения"));
     }
 
@@ -73,10 +64,7 @@ class SimpleValidationTests {
         film.setReleaseDate(LocalDate.now());
         film.setDuration(90);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.addFilm(film)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.addFilm(film));
         assertTrue(exception.getMessage().contains("Название"));
     }
 
@@ -88,10 +76,7 @@ class SimpleValidationTests {
         film.setReleaseDate(LocalDate.now());
         film.setDuration(90);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.addFilm(film)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.addFilm(film));
         assertTrue(exception.getMessage().contains("Описание"));
     }
 
@@ -102,10 +87,7 @@ class SimpleValidationTests {
         film.setReleaseDate(LocalDate.of(1890, 1, 1));
         film.setDuration(90);
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.addFilm(film)
-        );
+        ValidationException exception = assertThrows(ValidationException.class, () -> filmController.addFilm(film));
         assertTrue(exception.getMessage().contains("релиза"));
     }
 
