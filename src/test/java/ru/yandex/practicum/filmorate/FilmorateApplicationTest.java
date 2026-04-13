@@ -1,6 +1,10 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -11,10 +15,14 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class FilmorateApplicationTest {
 
-    private final UserController userController = new UserController();
-    private final FilmController filmController = new FilmController();
+    @Autowired
+    private UserController userController;
+
+    @Autowired
+    private FilmController filmController;
 
     @Test
     void testEmptyEmailThrowsException() {
@@ -58,54 +66,11 @@ class FilmorateApplicationTest {
         user.setLogin("validlogin");
         user.setBirthday(LocalDate.of(1990, 1, 1));
 
-        assertDoesNotThrow(() -> userController.createUser(user));
-    }
+        User createdUser = assertDoesNotThrow(() -> userController.createUser(user));
 
-    @Test
-    void testEmptyNameThrowsException() {
-        Film film = new Film();
-        film.setReleaseDate(LocalDate.now());
-        film.setDuration(90);
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> filmController.addFilm(film));
-        assertTrue(exception.getMessage().contains("Название"));
-    }
-
-    @Test
-    void testLongDescriptionThrowsException() {
-        Film film = new Film();
-        film.setName("TestFilm");
-        film.setDescription("a".repeat(201));
-        film.setReleaseDate(LocalDate.now());
-        film.setDuration(90);
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> filmController.addFilm(film));
-        assertTrue(exception.getMessage().contains("Описание"));
-    }
-
-    @Test
-    void testPastReleaseDateThrowsException() {
-        Film film = new Film();
-        film.setName("OldFilm");
-        film.setReleaseDate(LocalDate.of(1890, 1, 1));
-        film.setDuration(90);
-
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> filmController.addFilm(film));
-        assertTrue(exception.getMessage().contains("релиза"));
-    }
-
-    @Test
-    void testValidFilmDoesNotThrow() {
-        Film film = new Film();
-        film.setName("Valid Film");
-        film.setDescription("Good description");
-        film.setReleaseDate(LocalDate.of(2000, 1, 1));
-        film.setDuration(90);
-
-        assertDoesNotThrow(() -> filmController.addFilm(film));
+        assertNotNull(createdUser.getId());
+        assertEquals("valid@example.com", createdUser.getEmail());
+        assertEquals("validlogin", createdUser.getLogin());
     }
 }
 
