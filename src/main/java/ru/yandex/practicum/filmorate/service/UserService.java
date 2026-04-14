@@ -61,10 +61,7 @@ public class UserService {
         Set<Long> commonFriendsIds = new HashSet<>(user1.getFriends());
         commonFriendsIds.retainAll(user2.getFriends());
 
-        return commonFriendsIds.stream()
-                .map(userStorage::getById)
-                .filter(user -> user != null)
-                .collect(Collectors.toList());
+        return commonFriendsIds.stream().map(userStorage::getById).filter(user -> user != null).collect(Collectors.toList());
     }
 
     public Set<Long> getUserFriends(Long userId) {
