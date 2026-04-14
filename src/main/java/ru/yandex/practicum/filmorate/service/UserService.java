@@ -26,8 +26,11 @@ public class UserService {
         User user = userStorage.getById(userId);
         User friend = userStorage.getById(friendId);
 
-        if (user == null || friend == null) {
-            throw new ValidationException("Пользователь или друг не найден");
+        if (user == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
+        }
+        if (friend == null) {
+            throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
 
         user.getFriends().add(friendId);
@@ -39,16 +42,22 @@ public class UserService {
 
     public void removeFriend(Long userId, Long friendId) {
         User user = userStorage.getById(userId);
-        User friend = userStorage.getById(friendId);
-
-        if (user != null && friend != null) {
-            user.getFriends().remove(friendId);
-            friend.getFriends().remove(userId);
-
-            userStorage.update(user);
-            userStorage.update(friend);
+        if (user == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
+
+        User friend = userStorage.getById(friendId);
+        if (friend == null) {
+            throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
+        }
+
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
+
+        userStorage.update(user);
+        userStorage.update(friend);
     }
+
 
     public List<User> getCommonFriends(Long userId1, Long userId2) {
         User user1 = userStorage.getById(userId1);
@@ -67,7 +76,7 @@ public class UserService {
     public Set<Long> getUserFriends(Long userId) {
         User user = userStorage.getById(userId);
         if (user == null) {
-            throw new ValidationException("Пользователь не найден");
+            throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
         return user.getFriends();
     }

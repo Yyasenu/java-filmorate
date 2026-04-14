@@ -58,13 +58,11 @@ public class FilmService {
     }
 
     public Film addFilm(Film film) {
+        validateFilm(film);
         return filmStorage.add(film);
     }
 
     public Film updateFilm(Film film) {
-        if (film.getId() == null) {
-            throw new ValidationException("ID фильма не может быть null при обновлении");
-        }
         validateFilm(film);
         return filmStorage.update(film);
     }
