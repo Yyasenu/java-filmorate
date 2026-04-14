@@ -23,6 +23,10 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendId) {
+        if (userId.equals(friendId)) {
+            throw new ValidationException("Нельзя добавить себя в друзья");
+        }
+
         User user = userStorage.getById(userId);
         User friend = userStorage.getById(friendId);
 
@@ -33,31 +37,54 @@ public class UserService {
             throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
 
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
+        boolean userUpdated = user.getFriends().add(friendId);
+        boolean friendUpdated = friend.getFriends().add(userId);
 
-        userStorage.update(user);
-        userStorage.update(friend);
+        try {
+            if (userUpdated) {
+                userStorage.update(user);
+            }
+            if (friendUpdated) {
+                userStorage.update(friend);
+            }
+        } catch (Exception e) {
+            if (userUpdated) user.getFriends().remove(friendId);
+            if (friendUpdated) friend.getFriends().remove(userId);
+            throw e;
+        }
     }
 
     public void removeFriend(Long userId, Long friendId) {
+        if (userId.equals(friendId)) {
+            throw new ValidationException("Нельзя удалить себя из друзей");
+        }
+
         User user = userStorage.getById(userId);
+        User friend = userStorage.getById(friendId);
+
         if (user == null) {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
-
-        User friend = userStorage.getById(friendId);
         if (friend == null) {
             throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
 
-        user.getFriends().remove(friendId);
-        friend.getFriends().remove(userId);
+        boolean userUpdated = user.getFriends().remove(friendId);
+        boolean friendUpdated = friend.getFriends().remove(userId);
 
-        userStorage.update(user);
-        userStorage.update(friend);
+        try {
+            if (userUpdated) {
+                userStorage.update(user);
+            }
+            if (friendUpdated) {
+                userStorage.update(friend);
+            }
+        } catch (Exception e) {
+            if (userUpdated) user.getFriends().add(friendId);
+            if (friendUpdated) friend.getFriends().add(userId);
+            throw e;
+        }
     }
-
 
     public List<User> getCommonFriends(Long userId1, Long userId2) {
         User user1 = userStorage.getById(userId1);
@@ -70,7 +97,10 @@ public class UserService {
         Set<Long> commonFriendsIds = new HashSet<>(user1.getFriends());
         commonFriendsIds.retainAll(user2.getFriends());
 
-        return commonFriendsIds.stream().map(userStorage::getById).filter(user -> user != null).collect(Collectors.toList());
+        return commonFriendsIds.stream()
+                .map(userStorage::getById)
+                .filter(user -> user != null)
+                .collect(Collectors.toList());
     }
 
     public Set<Long> getUserFriends(Long userId) {
@@ -78,7 +108,7 @@ public class UserService {
         if (user == null) {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
-        return user.getFriends();
+        return new HashSet<>(user.getFriends());
     }
 
     public List<User> getAllUsers() {
@@ -101,7 +131,6 @@ public class UserService {
         }
         return userStorage.add(user);
     }
-
 
     public User updateUser(User user) {
         if (user.getId() == null) {
@@ -126,4 +155,3 @@ public class UserService {
         }
     }
 }
-

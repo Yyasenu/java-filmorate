@@ -31,7 +31,7 @@ public class FilmService {
     public void addLike(Long filmId, Long userId) {
         Film film = filmStorage.getById(filmId);
         if (film == null) {
-            throw new ValidationException("Фильм не найден");
+            throw new EntityNotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
         film.getLikes().add(userId);
@@ -40,10 +40,12 @@ public class FilmService {
 
     public void removeLike(Long filmId, Long userId) {
         Film film = filmStorage.getById(filmId);
-        if (film != null) {
-            film.getLikes().remove(userId);
-            filmStorage.update(film);
+        if (film == null) {
+            throw new EntityNotFoundException("Фильм с id = " + filmId + " не найден");
         }
+
+        film.getLikes().remove(userId);
+        filmStorage.update(film);
     }
 
     public List<Film> getPopularFilms(int count) {
