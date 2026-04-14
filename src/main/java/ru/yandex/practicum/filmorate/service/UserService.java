@@ -85,8 +85,14 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        validateUser(user);
+
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         return userStorage.add(user);
     }
+
 
     public User updateUser(User user) {
         if (user.getId() == null) {
