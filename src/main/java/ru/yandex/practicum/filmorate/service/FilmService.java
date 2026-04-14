@@ -4,7 +4,9 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Comparator;
@@ -15,7 +17,7 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-
+    private UserStorage userStorage;
     public FilmService(FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
     }
@@ -34,6 +36,11 @@ public class FilmService {
             throw new EntityNotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
+        User user = userStorage.getById(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
+        }
+
         film.getLikes().add(userId);
         filmStorage.update(film);
     }
@@ -44,9 +51,15 @@ public class FilmService {
             throw new EntityNotFoundException("Фильм с id = " + filmId + " не найден");
         }
 
+        User user = userStorage.getById(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
+        }
+
         film.getLikes().remove(userId);
         filmStorage.update(film);
     }
+
 
     public List<Film> getPopularFilms(int count) {
         return filmStorage.getAll().stream()
