@@ -2,12 +2,13 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -18,7 +19,6 @@ public class FilmController {
     private final FilmService filmService;
     private final Logger log = LoggerFactory.getLogger(FilmController.class);
 
-    @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
     }
@@ -30,14 +30,12 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable Long id) {
+    public ResponseEntity<Film> getFilmById(@PathVariable Long id) {
         log.info("Запрос на получение фильма с id: {}", id);
         Film film = filmService.getFilmById(id);
-        if (film == null) {
-            throw new RuntimeException("Фильм с id = " + id + " не найден");
-        }
-        return film;
+        return ResponseEntity.ok(film);
     }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
