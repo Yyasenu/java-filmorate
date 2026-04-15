@@ -36,7 +36,7 @@ public class UserService {
         if (friend == null) {
             throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
-        if (user.getFriends().contains(friendId) && friend.getFriends().contains(userId)) {
+        if (user.getFriends().contains(friendId)) {
             return;
         }
 
@@ -153,7 +153,10 @@ public class UserService {
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }
-        if (user.getBirthday() != null && user.getBirthday().isAfter(LocalDate.now())) {
+        if (user.getBirthday() == null) {
+            throw new ValidationException("Дата рождения обязательна");
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Дата рождения не может быть в будущем");
         }
     }
