@@ -17,10 +17,11 @@ import java.util.stream.Collectors;
 public class FilmService {
 
     private final FilmStorage filmStorage;
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
 
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     public Film getFilmById(Long id) {
@@ -42,8 +43,10 @@ public class FilmService {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        film.getLikes().add(userId);
-        filmStorage.update(film);
+        if (!film.getLikes().contains(userId)) {
+            film.getLikes().add(userId);
+            filmStorage.update(film);
+        }
     }
 
     public void removeLike(Long filmId, Long userId) {
@@ -57,10 +60,11 @@ public class FilmService {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        film.getLikes().remove(userId);
-        filmStorage.update(film);
+        if (film.getLikes().contains(userId)) {
+            film.getLikes().remove(userId);
+            filmStorage.update(film);
+        }
     }
-
 
     public List<Film> getPopularFilms(int count) {
         return filmStorage.getAll().stream()
