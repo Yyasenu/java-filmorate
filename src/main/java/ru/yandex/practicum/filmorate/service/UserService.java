@@ -1,13 +1,15 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserStorage userStorage;
+    private final Logger log = LoggerFactory.getLogger(UserController.class);
 
     public UserService(UserStorage userStorage) {
         this.userStorage = userStorage;
@@ -53,7 +56,7 @@ public class UserService {
         } catch (Exception e) {
             if (userUpdated) user.getFriends().remove(friendId);
             if (friendUpdated) friend.getFriends().remove(userId);
-            throw e;
+            throw new EntityNotFoundException("Не удалось сохранить изменения друзей: " + e.getMessage());
         }
     }
 
@@ -75,6 +78,11 @@ public class UserService {
         boolean userUpdated = user.getFriends().remove(friendId);
         boolean friendUpdated = friend.getFriends().remove(userId);
 
+        if (!userUpdated && !friendUpdated) {
+            throw new EntityNotFoundException(
+                    "Дружба между пользователями " + userId + " и " + friendId + " не найдена");
+        }
+
         try {
             if (userUpdated) {
                 userStorage.update(user);
@@ -83,9 +91,11 @@ public class UserService {
                 userStorage.update(friend);
             }
         } catch (Exception e) {
+            log.error("Ошибка при удалении дружбы между пользователями {} и {}", userId, friendId, e);
             if (userUpdated) user.getFriends().add(friendId);
             if (friendUpdated) friend.getFriends().add(userId);
-            throw e;
+            throw new RuntimeException(
+                    "Ошибка сохранения изменений дружбы: " + e.getMessage(), e);
         }
     }
 
@@ -93,8 +103,11 @@ public class UserService {
         User user1 = userStorage.getById(userId1);
         User user2 = userStorage.getById(userId2);
 
-        if (user1 == null || user2 == null) {
-            return new ArrayList<>();
+        if (user1 == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + userId1 + " не найден");
+        }
+        if (user2 == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + userId2 + " не найден");
         }
 
         Set<Long> commonFriendsIds = new HashSet<>(user1.getFriends());
@@ -107,6 +120,9 @@ public class UserService {
     }
 
     public Set<Long> getUserFriends(Long userId) {
+        if (userId == null) {
+            throw new ValidationException("ID пользователя не может быть null");
+        }
         User user = userStorage.getById(userId);
         if (user == null) {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
@@ -147,9 +163,6 @@ public class UserService {
     }
 
     private void validateUser(User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@")) {
-            throw new ValidationException("Email не может быть пустым и должен содержать @");
-        }
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }

@@ -32,9 +32,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
+        log.error("Необработанное исключение", ex);
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("{\"error\":\"InternalError\",\"message\":\"Произошла внутренняя ошибка сервера\"}");
+                .body(new ErrorResponse(
+                        "Произошла внутренняя ошибка сервера",
+                        HttpStatus.INTERNAL_SERVER_ERROR.value()
+                ));
     }
 }
