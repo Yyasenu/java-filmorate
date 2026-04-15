@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -104,9 +105,13 @@ class FilmorateApplicationTest {
         user.setLogin("testlogin");
         user.setBirthday(LocalDate.now());
 
-        ValidationException exception = assertThrows(ValidationException.class,
-                () -> userController.createUser(user));
-        assertTrue(exception.getMessage().contains("Email"));
+        ValidationException exception = assertThrows(
+                ValidationException.class,
+                () -> userController.createUser(user)
+        );
+
+        assertTrue(exception.getMessage().contains("Email"),
+                "Сообщение об ошибке должно содержать 'Email'");
     }
 
     @Test
