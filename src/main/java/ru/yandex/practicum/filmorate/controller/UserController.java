@@ -47,11 +47,10 @@ public class UserController {
         return createdUser;
     }
 
-    @PutMapping
-    public User updateUser(@Valid @RequestBody User user) {
-        User updatedUser = userService.updateUser(user);
-        log.info("Обновлён пользователь: {}", updatedUser.getLogin());
-        return updatedUser;
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
+        user.setId(id);
+        return userService.updateUser(user);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
