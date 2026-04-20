@@ -163,7 +163,7 @@ public class UserService {
     }
 
     private void validateUser(User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             throw new ValidationException("Email не может быть пустым");
         }
         if (user.getLogin() == null || user.getLogin().isBlank() || user.getLogin().contains(" ")) {

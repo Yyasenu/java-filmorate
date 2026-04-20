@@ -13,10 +13,11 @@ import java.util.Set;
 public class User {
     private Long id;
 
-    @Email(message = "Email не соответствует формату")
+    @Email(message = "Email должен соответствовать формату example@domain.com")
+    @NotBlank(message = "Email не может быть пустым")
     private String email;
 
-    @NotBlank(message = "Логин не может быть пустым")
+    @NotBlank(message = "Логин не может быть пустым и не должен содержать пробелы")
     private String login;
 
     private String name;
@@ -26,4 +27,3 @@ public class User {
 
     private Set<Long> friends = new HashSet<>();
 }
-
