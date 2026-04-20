@@ -20,6 +20,9 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film update(Film film) {
+        if (film == null || film.getId() == null) {
+            throw new EntityNotFoundException("Фильм не может быть null или без ID");
+        }
         if (!films.containsKey(film.getId())) {
             throw new EntityNotFoundException("Фильм с id = " + film.getId() + " не найден");
         }

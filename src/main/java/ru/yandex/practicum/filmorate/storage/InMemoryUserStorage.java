@@ -23,6 +23,9 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User update(User user) {
+        if (user == null || user.getId() == null) {
+            throw new EntityNotFoundException("Пользователь не может быть null или без ID");
+        }
         if (!users.containsKey(user.getId())) {
             throw new EntityNotFoundException("Пользователь с id = " + user.getId() + " не найден");
         }

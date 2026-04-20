@@ -43,21 +43,11 @@ public class UserService {
             return;
         }
 
-        boolean userUpdated = user.getFriends().add(friendId);
-        boolean friendUpdated = friend.getFriends().add(userId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
 
-        try {
-            if (userUpdated) {
-                userStorage.update(user);
-            }
-            if (friendUpdated) {
-                userStorage.update(friend);
-            }
-        } catch (Exception e) {
-            if (userUpdated) user.getFriends().remove(friendId);
-            if (friendUpdated) friend.getFriends().remove(userId);
-            throw new EntityNotFoundException("Не удалось сохранить изменения друзей: " + e.getMessage());
-        }
+        userStorage.update(user);
+        userStorage.update(friend);
     }
 
     public void removeFriend(Long userId, Long friendId) {
@@ -83,20 +73,8 @@ public class UserService {
                     "Дружба между пользователями " + userId + " и " + friendId + " не найдена");
         }
 
-        try {
-            if (userUpdated) {
-                userStorage.update(user);
-            }
-            if (friendUpdated) {
-                userStorage.update(friend);
-            }
-        } catch (Exception e) {
-            log.error("Ошибка при удалении дружбы между пользователями {} и {}", userId, friendId, e);
-            if (userUpdated) user.getFriends().add(friendId);
-            if (friendUpdated) friend.getFriends().add(userId);
-            throw new RuntimeException(
-                    "Ошибка сохранения изменений дружбы: " + e.getMessage(), e);
-        }
+        userStorage.update(user);
+        userStorage.update(friend);
     }
 
     public List<User> getCommonFriends(Long userId1, Long userId2) {
