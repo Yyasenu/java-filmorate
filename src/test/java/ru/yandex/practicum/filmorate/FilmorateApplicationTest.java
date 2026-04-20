@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -104,8 +105,8 @@ class FilmorateApplicationTest {
         user.setLogin("testlogin");
         user.setBirthday(LocalDate.now());
 
-        ValidationException exception = assertThrows(
-                ValidationException.class,
+        ConstraintViolationException exception = assertThrows(
+                ConstraintViolationException.class,
                 () -> userController.createUser(user)
         );
 
