@@ -45,7 +45,7 @@ public class FilmController {
         return createdFilm;
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public Film updateFilm(@RequestBody Film film) {
         Film updatedFilm = filmService.updateFilm(film);
         log.info("Обновлён фильм: {}", updatedFilm.getName());

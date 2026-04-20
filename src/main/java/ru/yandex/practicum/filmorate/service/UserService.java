@@ -31,11 +31,10 @@ public class UserService {
         }
 
         User user = userStorage.getById(userId);
-        User friend = userStorage.getById(friendId);
-
         if (user == null) {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
+        User friend = userStorage.getById(friendId);
         if (friend == null) {
             throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
@@ -56,11 +55,10 @@ public class UserService {
         }
 
         User user = userStorage.getById(userId);
-        User friend = userStorage.getById(friendId);
-
         if (user == null) {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
+        User friend = userStorage.getById(friendId);
         if (friend == null) {
             throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
