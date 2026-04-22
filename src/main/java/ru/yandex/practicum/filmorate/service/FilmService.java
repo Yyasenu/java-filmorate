@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
+    private final Logger log = LoggerFactory.getLogger(FilmService.class);
 
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
@@ -83,6 +86,16 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
+        if (film.getId() == null) {
+            throw new ValidationException("ID фильма не может быть null при обновлении");
+        }
+
+        Film existingFilm = filmStorage.getById(film.getId());
+        if (existingFilm == null) {
+            log.warn("Фильм с ID {} не найден при попытке обновления", film.getId());
+            throw new EntityNotFoundException("Фильм с id = " + film.getId() + " не найден");
+        }
+
         validateFilm(film);
         return filmStorage.update(film);
     }

@@ -25,8 +25,15 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getAllFilms() {
-        log.info("Запрос на получение всех фильмов");
-        return filmService.getAllFilms();
+        log.info("Начало запроса на получение всех фильмов");
+        try {
+            List<Film> films = filmService.getAllFilms();
+            log.info("Успешно получено {} фильмов", films.size());
+            return films;
+        } catch (Exception e) {
+            log.error("Ошибка при получении списка фильмов", e);
+            throw e;
+        }
     }
 
     @GetMapping("/{id}")

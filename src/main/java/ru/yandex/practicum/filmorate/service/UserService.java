@@ -66,11 +66,6 @@ public class UserService {
         boolean userUpdated = user.getFriends().remove(friendId);
         boolean friendUpdated = friend.getFriends().remove(userId);
 
-        if (!userUpdated && !friendUpdated) {
-            throw new EntityNotFoundException(
-                    "Дружба между пользователями " + userId + " и " + friendId + " не найдена");
-        }
-
         userStorage.update(user);
         userStorage.update(friend);
     }
@@ -130,6 +125,10 @@ public class UserService {
     public User updateUser(User user) {
         if (user.getId() == null) {
             throw new ValidationException("ID пользователя не может быть null при обновлении");
+        }
+        User existingUser = userStorage.getById(user.getId());
+        if (existingUser == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + user.getId() + " не найден");
         }
         validateUser(user);
         if (user.getName() == null || user.getName().isBlank()) {
