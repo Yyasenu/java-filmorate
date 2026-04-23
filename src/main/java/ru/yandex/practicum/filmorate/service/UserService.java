@@ -38,7 +38,7 @@ public class UserService {
         if (friend == null) {
             throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
-        if (user.getFriends().contains(friendId)) {
+        if (user.getFriends().contains(friendId) && friend.getFriends().contains(userId)) {
             return;
         }
 
