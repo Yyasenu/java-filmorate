@@ -24,15 +24,16 @@ public class FilmController {
     }
 
     @GetMapping
-    public List<Film> getAllFilms() {
+    public ResponseEntity<List<Film>> getAllFilms() {
         log.info("Начало запроса на получение всех фильмов");
         try {
             List<Film> films = filmService.getAllFilms();
             log.info("Успешно получено {} фильмов", films.size());
-            return films;
+            return ResponseEntity.ok(films);
         } catch (Exception e) {
             log.error("Ошибка при получении списка фильмов", e);
-            throw e;
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
         }
     }
 
@@ -52,9 +53,8 @@ public class FilmController {
         return createdFilm;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Film> updateFilm(@PathVariable Long id, @RequestBody Film film) {
-        film.setId(id);
+    @PutMapping
+    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
         Film updatedFilm = filmService.updateFilm(film);
         log.info("Обновлён фильм: {}", updatedFilm.getName());
         return ResponseEntity.ok(updatedFilm);
