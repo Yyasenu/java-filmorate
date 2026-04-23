@@ -78,4 +78,10 @@ public class UserController {
         log.debug("Запрос на получение общих друзей пользователей {} и {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
+
+    @GetMapping("/{id}/friends/count")
+    public int getFriendsCount(@PathVariable Long id) {
+        log.debug("Запрос на получение количества друзей пользователя {}", id);
+        return userService.getFriendsCount(id);
+    }
 }

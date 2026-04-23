@@ -3,6 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -141,6 +143,17 @@ public class UserService {
             user.setName(user.getLogin());
         }
         return userStorage.update(user);
+    }
+
+    public int getFriendsCount(Long userId) {
+        if (userId == null) {
+            throw new ValidationException("ID пользователя не может быть null");
+        }
+        User user = userStorage.getById(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
+        }
+        return user.getFriends().size();
     }
 
     private void validateUser(User user) {
