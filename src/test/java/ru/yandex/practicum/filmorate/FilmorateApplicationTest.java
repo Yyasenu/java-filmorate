@@ -4,8 +4,6 @@ import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
@@ -28,14 +26,14 @@ class FilmorateApplicationTest {
 
     @Test
     void testAddFriendWithUnknownUserIdThrowsNotFound() {
-        ResponseEntity<Void> response = userController.addFriend(999L, 1L);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertThrows(EntityNotFoundException.class,
+                () -> userController.addFriend(999L, 1L));
     }
 
     @Test
     void testAddFriendWithUnknownFriendIdThrowsNotFound() {
-        ResponseEntity<Void> response = userController.addFriend(1L, 999L);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertThrows(EntityNotFoundException.class,
+                () -> userController.addFriend(1L, 999L));
     }
 
     @Test

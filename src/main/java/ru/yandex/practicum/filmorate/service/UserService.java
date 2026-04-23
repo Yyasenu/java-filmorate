@@ -39,10 +39,15 @@ public class UserService {
             throw new EntityNotFoundException("Друг с id = " + friendId + " не найден");
         }
 
-        if (user.getFriends().contains(friendId) && friend.getFriends().contains(userId)) {
+        boolean userHasFriend = user.getFriends().contains(friendId);
+        boolean friendHasUser = friend.getFriends().contains(userId);
+
+        if (userHasFriend && friendHasUser) {
+            log.debug("Дружба между {} и {} уже установлена", userId, friendId);
             return;
         }
 
+        log.debug("Добавляем дружбу: пользователь {} → друг {}", userId, friendId);
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
 

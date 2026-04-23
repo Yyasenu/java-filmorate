@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -56,18 +54,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<Void> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         log.debug("Пользователь {} пытается добавить в друзья пользователя {}", id, friendId);
-        try {
-            userService.addFriend(id, friendId);
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } catch (EntityNotFoundException e) {
-            log.warn("Ошибка при добавлении в друзья: {}", e.getMessage());
-            return ResponseEntity.notFound().build(); // 404 Not Found
-        } catch (ValidationException e) {
-            log.warn("Ошибка валидации при добавлении в друзья: {}", e.getMessage());
-            return ResponseEntity.badRequest().build(); // 400 Bad Request
-        }
+        userService.addFriend(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
