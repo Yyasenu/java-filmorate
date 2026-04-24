@@ -68,20 +68,15 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public Set<Long> getUserFriends(@PathVariable Long id) {
+    public List<User> getUserFriends(@PathVariable Long id) {
         log.debug("Запрос на получение друзей пользователя {}", id);
         return userService.getUserFriends(id);
     }
+
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
         log.debug("Запрос на получение общих друзей пользователей {} и {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
-    }
-
-    @GetMapping("/{id}/friends/count")
-    public int getFriendsCount(@PathVariable Long id) {
-        log.debug("Запрос на получение количества друзей пользователя {}", id);
-        return userService.getFriendsCount(id);
     }
 }

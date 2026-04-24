@@ -96,7 +96,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Set<Long> getUserFriends(Long userId) {
+    public List<User> getUserFriends(Long userId) {
         if (userId == null) {
             throw new ValidationException("ID пользователя не может быть null");
         }
@@ -104,7 +104,11 @@ public class UserService {
         if (user == null) {
             throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
         }
-        return new HashSet<>(user.getFriends());
+
+        return user.getFriends().stream()
+                .map(friendId -> userStorage.getById(friendId))
+                .filter(userObj -> userObj != null)
+                .collect(Collectors.toList());
     }
 
     public List<User> getAllUsers() {
@@ -141,17 +145,6 @@ public class UserService {
             user.setName(user.getLogin());
         }
         return userStorage.update(user);
-    }
-
-    public int getFriendsCount(Long userId) {
-        if (userId == null) {
-            throw new ValidationException("ID пользователя не может быть null");
-        }
-        User user = userStorage.getById(userId);
-        if (user == null) {
-            throw new EntityNotFoundException("Пользователь с id = " + userId + " не найден");
-        }
-        return user.getFriends().size();
     }
 
     private void validateUser(User user) {
