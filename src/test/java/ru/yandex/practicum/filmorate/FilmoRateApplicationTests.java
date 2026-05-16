@@ -59,14 +59,14 @@ class FilmoRateApplicationTests {
     }
 
     @Test
-    void getFilmById_shouldConfirmThatFilmIdExists(){
+    void getFilmById_shouldConfirmThatFilmIdExists() {
         Film film = Film.builder().id(1).name("Avatar").
                 description("blue peoples").
                 releaseDate(LocalDate.now().minusYears(40)).
                 duration(180).genres(new HashSet<>()).mpa(ratingMpaDbStorage.getRatingMpaById(1)).build();
         filmDbStorage.create(film);
 
-        assertEquals(filmDbStorage.getById(1).getId(),film.getId());
+        assertEquals(filmDbStorage.getById(1).getId(), film.getId());
     }
 
     @Test

@@ -26,7 +26,8 @@ class FilmTest {
     @Test
     void getAllFilms_shouldReturnNonEmptyList() {
         ResponseEntity<List<Film>> response = restTemplate.exchange(
-                "/films", HttpMethod.GET, null, new ParameterizedTypeReference<List<Film>>() {});
+                "/films", HttpMethod.GET, null, new ParameterizedTypeReference<List<Film>>() {
+                });
 
         List<Film> films = response.getBody();
         assertNotNull(films);
